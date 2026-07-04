@@ -6,5 +6,14 @@ export default defineNuxtConfig({
   pinia: {
     storesDirs: ['./app/stores/**']
   },
-  css: ['~/assets/css/main.css']
+  css: ['~/assets/css/main.css'],
+  runtimeConfig: {
+    shopifyAdminToken: '',
+    public: {
+      shopifyStoreDomain: '',
+      shopifyStorefrontToken: '',
+      shopifyApiVersion: '2024-10',
+      appUrl: ''
+    }
+  }
 })
