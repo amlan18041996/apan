@@ -1,0 +1,76 @@
+import { shopifyApi, LATEST_API_VERSION } from '@shopify/shopify-api'
+import type { ShopifyConfig } from '~/types/shopify'
+
+let shopifyClient: ReturnType<typeof shopifyApi> | null = null
+
+function getConfig(): ShopifyConfig {
+  const { runtimeConfig } = useRuntimeConfig()
+
+  return {
+    storeDomain: runtimeConfig.public.shopifyStoreDomain || '',
+    storefrontAccessToken: runtimeConfig.public.shopifyStorefrontToken || '',
+    apiVersion: runtimeConfig.public.shopifyApiVersion || LATEST_API_VERSION,
+    adminAccessToken: runtimeConfig.shopifyAdminToken || ''
+  }
+}
+
+function getClient() {
+  if (shopifyClient) return shopifyClient
+
+  const config = getConfig()
+
+  shopifyClient = shopifyApi({
+    apiKey: config.storefrontAccessToken,
+    apiSecretKey: config.adminAccessToken || '',
+    apiVersion: config.apiVersion as any,
+    scopes: ['unauthenticated_read_product_listings'],
+    isEmbeddedApp: false,
+    hostName: config.storeDomain.replace('.myshopify.com', '')
+  })
+
+  return shopifyClient
+}
+
+export async function shopifyFetch<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
+  const config = getConfig()
+  const endpoint = `https://${config.storeDomain}/api/${config.apiVersion}/graphql.json`
+
+  const response = await $fetch<{ data: T; errors?: any[] }>(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Shopify-Storefront-Access-Token': config.storefrontAccessToken
+    },
+    body: { query, variables }
+  })
+
+  if (response.errors?.length) {
+    throw new Error(response.errors[0]?.message || 'Shopify API error')
+  }
+
+  return response.data
+}
+
+export async function shopifyAdminFetch<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
+  const config = getConfig()
+  const endpoint = `https://${config.storeDomain}/admin/api/${config.apiVersion}/graphql.json`
+
+  const response = await $fetch<{ data: T; errors?: any[] }>(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Shopify-Access-Token': config.adminAccessToken || ''
+    },
+    body: { query, variables }
+  })
+
+  if (response.errors?.length) {
+    throw new Error(response.errors[0]?.message || 'Shopify Admin API error')
+  }
+
+  return response.data
+}
+
+export function getShopifyClient() {
+  return getClient()
+}
