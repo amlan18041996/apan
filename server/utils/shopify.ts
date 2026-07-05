@@ -6,8 +6,7 @@ function getConfig() {
   return {
     storeDomain: process.env.NUXT_PUBLIC_SHOPIFY_STORE_DOMAIN || '',
     storefrontAccessToken: process.env.NUXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN || '',
-    apiVersion: process.env.NUXT_PUBLIC_SHOPIFY_API_VERSION || ApiVersion.July26,
-    adminAccessToken: process.env.NUXT_SHOPIFY_ADMIN_TOKEN || ''
+    apiVersion: process.env.NUXT_PUBLIC_SHOPIFY_API_VERSION || ApiVersion.July26
   }
 }
 
@@ -18,7 +17,7 @@ function getClient() {
 
   shopifyClient = shopifyApi({
     apiKey: config.storefrontAccessToken,
-    apiSecretKey: config.adminAccessToken || '',
+    apiSecretKey: config.storefrontAccessToken || '',
     apiVersion: config.apiVersion as any,
     scopes: ['unauthenticated_read_product_listings'],
     isEmbeddedApp: false,
@@ -52,11 +51,13 @@ export async function shopifyAdminFetch<T>(query: string, variables?: Record<str
   const config = getConfig()
   const endpoint = `https://${config.storeDomain}/admin/api/${config.apiVersion}/graphql.json`
 
+  const token = await getAdminToken()
+
   const response = await $fetch<{ data: T; errors?: any[] }>(endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': config.adminAccessToken || ''
+      'X-Shopify-Access-Token': token
     },
     body: { query, variables }
   })
