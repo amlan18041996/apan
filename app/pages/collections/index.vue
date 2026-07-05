@@ -29,7 +29,7 @@
           <div class="p-4">
             <h3 class="text-lg font-semibold text-text">{{ collection.title }}</h3>
             <p v-if="collection.description" class="mt-1 text-sm text-text-muted line-clamp-2">{{ collection.description }}</p>
-            <p class="mt-2 text-xs text-text-muted">{{ collection.productsCount }} products</p>
+            <p class="mt-2 text-xs text-text-muted">{{ collection.productsCount.count }} products</p>
           </div>
         </NuxtLink>
       </div>

@@ -45,8 +45,8 @@
       <div>
         <h1 class="text-3xl font-bold text-text">{{ product.title }}</h1>
         <p v-if="product.vendor" class="mt-1 text-sm text-text-muted">by {{ product.vendor }}</p>
-        <p class="mt-4 text-3xl font-bold text-primary-600">${{ formatPrice(product.priceRange.minVariantPrice.amount) }}</p>
-        <p v-if="product.availableForSale" class="mt-1 text-sm text-green-600">In Stock ({{ product.totalInventory }} available)</p>
+        <p class="mt-4 text-3xl font-bold text-primary-600">${{ formatPrice(product.priceRangeV2.minVariantPrice.amount) }}</p>
+        <p v-if="product.status === 'ACTIVE'" class="mt-1 text-sm text-green-600">In Stock ({{ product.totalInventory }} available)</p>
         <p v-else class="mt-1 text-sm text-red-600">Out of Stock</p>
 
         <hr class="my-6 border-border" />
@@ -66,7 +66,7 @@
             <span class="flex h-10 w-12 items-center justify-center text-sm text-text">{{ quantity }}</span>
             <button class="flex h-10 w-10 items-center justify-center text-text-muted transition-colors hover:bg-gray-100" @click="quantity = Math.min(product.totalInventory || 99, quantity + 1)">+</button>
           </div>
-          <button class="btn-primary flex-1" :disabled="!product.availableForSale" @click="addToCart">Add to Cart</button>
+          <button class="btn-primary flex-1" :disabled="product.status !== 'ACTIVE'" @click="addToCart">Add to Cart</button>
           <button class="rounded-lg border border-border p-2.5 text-text-muted transition-colors hover:border-red-300 hover:text-red-500" @click="toggleWishlist">
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
           </button>
@@ -138,7 +138,7 @@ function addToCart() {
     variantId: product.value.variants[0]?.id ?? '',
     title: product.value.title,
     image: product.value.featuredImage?.url ?? '',
-    price: parseFloat(product.value.priceRange.minVariantPrice.amount),
+    price: parseFloat(product.value.priceRangeV2.minVariantPrice.amount),
     quantity: quantity.value
   })
   ui.addToast({ type: 'success', message: `${product.value.title} added to cart` })
@@ -151,7 +151,7 @@ function toggleWishlist() {
     productId: product.value.id,
     title: product.value.title,
     image: product.value.featuredImage?.url ?? '',
-    price: parseFloat(product.value.priceRange.minVariantPrice.amount)
+    price: parseFloat(product.value.priceRangeV2.minVariantPrice.amount)
   })
   ui.addToast({ type: 'info', message: wishlist.isInWishlist(product.value.id) ? 'Added to wishlist' : 'Removed from wishlist' })
 }

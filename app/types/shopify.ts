@@ -15,14 +15,13 @@ export interface ShopifyProduct {
   productType: string
   tags: string[]
   status: 'ACTIVE' | 'DRAFT' | 'ARCHIVED'
-  availableForSale: boolean
   totalInventory: number
   createdAt: string
   updatedAt: string
   featuredImage: ShopifyImage | null
   images: ShopifyImage[]
   variants: ShopifyProductVariant[]
-  priceRange: ShopifyPriceRange
+  priceRangeV2: ShopifyPriceRangeV2
   options: ShopifyProductOption[]
   seo: ShopifySeo
 }
@@ -31,9 +30,8 @@ export interface ShopifyProductVariant {
   id: string
   title: string
   sku: string
-  price: number
-  compareAtPrice: number | null
-  availableForSale: boolean
+  price: string
+  compareAtPrice: string | null
   inventoryQuantity: number
   selectedOptions: { name: string; value: string }[]
   image: ShopifyImage | null
@@ -47,9 +45,15 @@ export interface ShopifyImage {
   height: number
 }
 
-export interface ShopifyPriceRange {
-  minVariantPrice: number
-  maxVariantPrice: number
+export interface ShopifyPriceRangeV2 {
+  minVariantPrice: {
+    amount: string
+    currencyCode: string
+  }
+  maxVariantPrice: {
+    amount: string
+    currencyCode: string
+  }
 }
 
 export interface ShopifyProductOption {
@@ -64,7 +68,7 @@ export interface ShopifyCollection {
   handle: string
   description: string
   image: ShopifyImage | null
-  productsCount: number
+  productsCount: { count: number }
 }
 
 export interface ShopifyCart {
