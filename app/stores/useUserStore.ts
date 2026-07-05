@@ -24,14 +24,22 @@ export const useUserStore = defineStore('user', {
 
   getters: {
     isAuthenticated: (state) => !!state.accessToken,
-    fullName: (state) => state.user ? `${state.user.firstName} ${state.user.lastName}` : ''
+    fullName: (state) => state.user ? `${state.user.firstName} ${state.user.lastName}`.trim() || state.user.email : ''
   },
 
   actions: {
     async login(email: string, password: string) {
       this.loading = true
       try {
-
+        const data = await $fetch<{ user: User; accessToken: string }>('/api/auth/login', {
+          method: 'POST',
+          body: { email, password }
+        })
+        this.user = data.user
+        this.accessToken = data.accessToken
+        return true
+      } catch (err: any) {
+        throw new Error(err.data?.statusMessage || err.message || 'Login failed')
       } finally {
         this.loading = false
       }
@@ -40,7 +48,15 @@ export const useUserStore = defineStore('user', {
     async register(data: { email: string; password: string; firstName: string; lastName: string }) {
       this.loading = true
       try {
-
+        const result = await $fetch<{ user: User; accessToken: string }>('/api/auth/register', {
+          method: 'POST',
+          body: data
+        })
+        this.user = result.user
+        this.accessToken = result.accessToken
+        return true
+      } catch (err: any) {
+        throw new Error(err.data?.statusMessage || err.message || 'Registration failed')
       } finally {
         this.loading = false
       }
@@ -55,7 +71,13 @@ export const useUserStore = defineStore('user', {
       if (!this.accessToken) return
       this.loading = true
       try {
-
+        const data = await $fetch<{ user: User }>('/api/auth/me', {
+          headers: { authorization: `Bearer ${this.accessToken}` }
+        })
+        this.user = data.user
+      } catch {
+        this.user = null
+        this.accessToken = null
       } finally {
         this.loading = false
       }

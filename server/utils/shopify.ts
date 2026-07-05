@@ -1,15 +1,14 @@
-import { shopifyApi, LATEST_API_VERSION } from '@shopify/shopify-api'
-import type { ShopifyConfig } from '~/types/shopify'
+import { shopifyApi, ApiVersion } from '@shopify/shopify-api'
 
 let shopifyClient: ReturnType<typeof shopifyApi> | null = null
 
-function getConfig(): ShopifyConfig {
+function getConfig() {
   const { runtimeConfig } = useRuntimeConfig()
 
   return {
     storeDomain: runtimeConfig.public.shopifyStoreDomain || '',
     storefrontAccessToken: runtimeConfig.public.shopifyStorefrontToken || '',
-    apiVersion: runtimeConfig.public.shopifyApiVersion || LATEST_API_VERSION,
+    apiVersion: runtimeConfig.public.shopifyApiVersion || ApiVersion.July26,
     adminAccessToken: runtimeConfig.shopifyAdminToken || ''
   }
 }
