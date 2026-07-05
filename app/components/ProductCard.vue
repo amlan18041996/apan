@@ -8,7 +8,7 @@
     </div>
     <div class="p-4">
       <h3 class="mb-1 text-sm font-medium text-text">{{ product.title }}</h3>
-      <p class="text-lg font-semibold text-primary-600">${{ formatPrice(product.priceRange.minVariantPrice.amount) }}</p>
+      <p class="text-lg font-semibold text-primary-600">${{ formatPrice(product.priceRangeV2.minVariantPrice.amount) }}</p>
     </div>
   </NuxtLink>
 </template>

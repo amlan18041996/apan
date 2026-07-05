@@ -3,13 +3,11 @@ import { shopifyApi, ApiVersion } from '@shopify/shopify-api'
 let shopifyClient: ReturnType<typeof shopifyApi> | null = null
 
 function getConfig() {
-  const { runtimeConfig } = useRuntimeConfig()
-
   return {
-    storeDomain: runtimeConfig.public.shopifyStoreDomain || '',
-    storefrontAccessToken: runtimeConfig.public.shopifyStorefrontToken || '',
-    apiVersion: runtimeConfig.public.shopifyApiVersion || ApiVersion.July26,
-    adminAccessToken: runtimeConfig.shopifyAdminToken || ''
+    storeDomain: process.env.NUXT_PUBLIC_SHOPIFY_STORE_DOMAIN || '',
+    storefrontAccessToken: process.env.NUXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN || '',
+    apiVersion: process.env.NUXT_PUBLIC_SHOPIFY_API_VERSION || ApiVersion.July26,
+    adminAccessToken: process.env.NUXT_SHOPIFY_ADMIN_TOKEN || ''
   }
 }
 
