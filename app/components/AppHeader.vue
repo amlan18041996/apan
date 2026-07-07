@@ -2,7 +2,10 @@
   <header class="border-b border-border bg-surface">
     <div class="container-page flex h-16 items-center justify-between">
       <div class="flex items-center gap-8">
-        <NuxtLink to="/" class="text-xl font-bold text-text">APAN Store</NuxtLink>
+        <NuxtLink to="/" class="flex items-center">
+          <img src="/apan-logo-desktop.svg" alt="APAN Store" class="hidden md:block h-8 w-auto" />
+          <img src="/apan-logo-mobile.svg" alt="APAN Store" class="block md:hidden h-8 w-auto" />
+        </NuxtLink>
         <nav class="hidden items-center gap-6 md:flex">
           <NuxtLink to="/products" class="text-sm font-medium text-text-muted transition-colors hover:text-text">Products</NuxtLink>
           <NuxtLink to="/collections" class="text-sm font-medium text-text-muted transition-colors hover:text-text">Collections</NuxtLink>
