@@ -19,12 +19,13 @@ export const useUserStore = defineStore('user', {
   state: (): UserState => ({
     user: null,
     accessToken: null,
-    loading: false
+    loading: false,
   }),
 
   getters: {
     isAuthenticated: (state) => !!state.accessToken,
-    fullName: (state) => state.user ? `${state.user.firstName} ${state.user.lastName}`.trim() || state.user.email : ''
+    fullName: (state) =>
+      state.user ? `${state.user.firstName} ${state.user.lastName}`.trim() || state.user.email : '',
   },
 
   actions: {
@@ -33,7 +34,7 @@ export const useUserStore = defineStore('user', {
       try {
         const data = await $fetch<{ user: User; accessToken: string }>('/api/auth/login', {
           method: 'POST',
-          body: { email, password }
+          body: { email, password },
         })
         this.user = data.user
         this.accessToken = data.accessToken
@@ -50,7 +51,7 @@ export const useUserStore = defineStore('user', {
       try {
         const result = await $fetch<{ user: User; accessToken: string }>('/api/auth/register', {
           method: 'POST',
-          body: data
+          body: data,
         })
         this.user = result.user
         this.accessToken = result.accessToken
@@ -72,7 +73,7 @@ export const useUserStore = defineStore('user', {
       this.loading = true
       try {
         const data = await $fetch<{ user: User }>('/api/auth/me', {
-          headers: { authorization: `Bearer ${this.accessToken}` }
+          headers: { authorization: `Bearer ${this.accessToken}` },
         })
         this.user = data.user
       } catch {
@@ -81,6 +82,6 @@ export const useUserStore = defineStore('user', {
       } finally {
         this.loading = false
       }
-    }
-  }
+    },
+  },
 })

@@ -25,7 +25,13 @@ export default defineEventHandler(async (event) => {
 
   const result = await shopifyAdminFetch<{
     customerAccessToken: {
-      customer: { id: string; email: string; firstName: string; lastName: string; phone: string | null } | null
+      customer: {
+        id: string
+        email: string
+        firstName: string
+        lastName: string
+        phone: string | null
+      } | null
       expiresAt: string
     } | null
   }>(query, { token })
@@ -42,7 +48,7 @@ export default defineEventHandler(async (event) => {
       email: customer.email,
       firstName: customer.firstName,
       lastName: customer.lastName,
-      phone: customer.phone ?? undefined
-    }
+      phone: customer.phone ?? undefined,
+    },
   }
 })

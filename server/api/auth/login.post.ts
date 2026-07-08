@@ -2,14 +2,18 @@ import { z } from 'zod'
 
 const bodySchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8)
+  password: z.string().min(8),
 })
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const parsed = bodySchema.safeParse(body)
   if (!parsed.success) {
-    throw createError({ statusCode: 400, statusMessage: 'Invalid input', data: parsed.error.flatten() })
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Invalid input',
+      data: parsed.error.flatten(),
+    })
   }
 
   const { email, password } = parsed.data
@@ -38,7 +42,7 @@ export default defineEventHandler(async (event) => {
       customerUserErrors: { code: string; field: string[]; message: string }[]
     }
   }>(query, {
-    input: { email, password }
+    input: { email, password },
   })
 
   const { customerAccessToken, customerUserErrors } = result.customerAccessTokenCreate
@@ -46,7 +50,7 @@ export default defineEventHandler(async (event) => {
   if (customerUserErrors.length > 0) {
     throw createError({
       statusCode: 401,
-      statusMessage: customerUserErrors[0].message
+      statusMessage: customerUserErrors[0].message,
     })
   }
 
@@ -66,7 +70,13 @@ export default defineEventHandler(async (event) => {
 
   const customerResult = await shopifyAdminFetch<{
     customers: {
-      nodes: { id: string; email: string; firstName: string; lastName: string; phone: string | null }[]
+      nodes: {
+        id: string
+        email: string
+        firstName: string
+        lastName: string
+        phone: string | null
+      }[]
     }
   }>(customerQuery, { email })
 
@@ -78,8 +88,8 @@ export default defineEventHandler(async (event) => {
       email: customer?.email ?? email,
       firstName: customer?.firstName ?? '',
       lastName: customer?.lastName ?? '',
-      phone: customer?.phone ?? undefined
+      phone: customer?.phone ?? undefined,
     },
-    accessToken: customerAccessToken!.accessToken
+    accessToken: customerAccessToken!.accessToken,
   }
 })

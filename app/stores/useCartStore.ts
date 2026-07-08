@@ -21,18 +21,18 @@ export const useCartStore = defineStore('cart', {
   state: (): CartState => ({
     items: [],
     cartId: null,
-    loading: false
+    loading: false,
   }),
 
   getters: {
     totalItems: (state) => state.items.reduce((acc, item) => acc + item.quantity, 0),
     subtotal: (state) => state.items.reduce((acc, item) => acc + item.price * item.quantity, 0),
-    isEmpty: (state) => state.items.length === 0
+    isEmpty: (state) => state.items.length === 0,
   },
 
   actions: {
     async addToCart(item: Omit<CartItem, 'quantity'> & { quantity?: number }) {
-      const existing = this.items.find(i => i.id === item.id)
+      const existing = this.items.find((i) => i.id === item.id)
       if (existing) {
         existing.quantity += item.quantity ?? 1
       } else {
@@ -41,19 +41,19 @@ export const useCartStore = defineStore('cart', {
     },
 
     async updateQuantity(itemId: string, quantity: number) {
-      const item = this.items.find(i => i.id === itemId)
+      const item = this.items.find((i) => i.id === itemId)
       if (item) {
         item.quantity = Math.max(1, Math.min(quantity, item.maxQuantity))
       }
     },
 
     async removeItem(itemId: string) {
-      this.items = this.items.filter(i => i.id !== itemId)
+      this.items = this.items.filter((i) => i.id !== itemId)
     },
 
     async clearCart() {
       this.items = []
       this.cartId = null
-    }
-  }
+    },
+  },
 })
