@@ -5,7 +5,7 @@ function getCredentials() {
   return {
     clientId: process.env.NUXT_SHOPIFY_CLIENT_ID || '',
     clientSecret: process.env.NUXT_SHOPIFY_CLIENT_SECRET || '',
-    storeDomain: process.env.NUXT_PUBLIC_SHOPIFY_STORE_DOMAIN || ''
+    storeDomain: process.env.NUXT_PUBLIC_SHOPIFY_STORE_DOMAIN || '',
   }
 }
 
@@ -13,7 +13,9 @@ async function fetchNewToken(): Promise<string> {
   const { clientId, clientSecret, storeDomain } = getCredentials()
 
   if (!clientId || !clientSecret || !storeDomain) {
-    throw new Error('Shopify Admin OAuth credentials not configured. Set NUXT_SHOPIFY_CLIENT_ID and NUXT_SHOPIFY_CLIENT_SECRET in .env')
+    throw new Error(
+      'Shopify Admin OAuth credentials not configured. Set NUXT_SHOPIFY_CLIENT_ID and NUXT_SHOPIFY_CLIENT_SECRET in .env',
+    )
   }
 
   const response = await $fetch<{
@@ -26,8 +28,8 @@ async function fetchNewToken(): Promise<string> {
     body: new URLSearchParams({
       grant_type: 'client_credentials',
       client_id: clientId,
-      client_secret: clientSecret
-    })
+      client_secret: clientSecret,
+    }),
   })
 
   if (!response.access_token) {
@@ -38,7 +40,7 @@ async function fetchNewToken(): Promise<string> {
   const buffer = Math.min(Math.floor(expiresIn * 0.2), 300)
   cachedToken = {
     token: response.access_token,
-    expiresAt: Date.now() + (expiresIn - buffer) * 1000
+    expiresAt: Date.now() + (expiresIn - buffer) * 1000,
   }
 
   return response.access_token

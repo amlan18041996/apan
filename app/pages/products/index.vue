@@ -30,14 +30,18 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: 'default'
+  layout: 'default',
 })
 
 const { getProducts } = useShopify()
 
-const { data: products, error, status } = useAsyncData('products', () => getProducts(20), {
+const {
+  data: products,
+  error,
+  status,
+} = useAsyncData('products', () => getProducts(20), {
   transform: (result) => result.products,
-  default: () => []
+  default: () => [],
 })
 
 const loading = computed(() => status.value === 'pending')

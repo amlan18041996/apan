@@ -23,11 +23,11 @@ export const useUIStore = defineStore('ui', {
     isSearchOpen: false,
     isDarkMode: false,
     activeModal: null,
-    toasts: []
+    toasts: [],
   }),
 
   getters: {
-    hasActiveModal: (state) => state.activeModal !== null
+    hasActiveModal: (state) => state.activeModal !== null,
   },
 
   actions: {
@@ -66,7 +66,7 @@ export const useUIStore = defineStore('ui', {
     },
 
     removeToast(id: string) {
-      this.toasts = this.toasts.filter(t => t.id !== id)
-    }
-  }
+      this.toasts = this.toasts.filter((t) => t.id !== id)
+    },
+  },
 })

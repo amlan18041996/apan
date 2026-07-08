@@ -11,11 +11,11 @@ export const addressSchema = z.object({
   state: z.string().min(1, 'State/Province is required'),
   zipCode: z.string().min(1, 'ZIP/Postal code is required'),
   country: z.string().min(1, 'Country is required'),
-  phone: z.string().regex(phoneRegex, 'Please enter a valid phone number').optional()
+  phone: z.string().regex(phoneRegex, 'Please enter a valid phone number').optional(),
 })
 
 export const shippingMethodSchema = z.object({
-  methodId: z.string().min(1, 'Please select a shipping method')
+  methodId: z.string().min(1, 'Please select a shipping method'),
 })
 
 export const paymentSchema = z.object({
@@ -23,13 +23,13 @@ export const paymentSchema = z.object({
   cardNumber: z.string().regex(/^\d{16}$/, 'Please enter a valid card number'),
   expiryDate: z.string().regex(/^(0[1-9]|1[0-2])\/\d{2}$/, 'Use MM/YY format'),
   cvv: z.string().regex(/^\d{3,4}$/, 'Please enter a valid CVV'),
-  sameAsBilling: z.boolean().default(true)
+  sameAsBilling: z.boolean().default(true),
 })
 
 export const orderReviewSchema = z.object({
   acceptTerms: z.literal(true, {
-    errorMap: () => ({ message: 'You must accept the terms and conditions' })
-  })
+    errorMap: () => ({ message: 'You must accept the terms and conditions' }),
+  }),
 })
 
 export type AddressInput = z.infer<typeof addressSchema>

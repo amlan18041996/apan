@@ -61,6 +61,6 @@ export function useFormValidation<T extends Record<string, unknown>>(schema: Zod
     validate,
     clearErrors,
     clearFieldError,
-    formatError
+    formatError,
   }
 }

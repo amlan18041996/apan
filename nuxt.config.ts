@@ -2,16 +2,14 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt'],
+  modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt', '@nuxt/eslint'],
   app: {
     head: {
-      link: [
-        { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }
-      ]
-    }
+      link: [{ rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
+    },
   },
   pinia: {
-    storesDirs: ['./app/stores/**']
+    storesDirs: ['./app/stores/**'],
   },
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
@@ -20,7 +18,7 @@ export default defineNuxtConfig({
       shopifyStoreDomain: '',
       shopifyStorefrontToken: '',
       shopifyApiVersion: '2024-10',
-      appUrl: ''
-    }
-  }
+      appUrl: '',
+    },
+  },
 })

@@ -4,14 +4,18 @@ const bodySchema = z.object({
   firstName: z.string().min(1).max(50),
   lastName: z.string().min(1).max(50),
   email: z.string().email(),
-  password: z.string().min(8)
+  password: z.string().min(8),
 })
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
   const parsed = bodySchema.safeParse(body)
   if (!parsed.success) {
-    throw createError({ statusCode: 400, statusMessage: 'Invalid input', data: parsed.error.flatten() })
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Invalid input',
+      data: parsed.error.flatten(),
+    })
   }
 
   const { firstName, lastName, email, password } = parsed.data
@@ -39,11 +43,17 @@ export default defineEventHandler(async (event) => {
 
   const result = await shopifyAdminFetch<{
     customerCreate: {
-      customer: { id: string; email: string; firstName: string; lastName: string; phone: string | null } | null
+      customer: {
+        id: string
+        email: string
+        firstName: string
+        lastName: string
+        phone: string | null
+      } | null
       customerUserErrors: { code: string; field: string[]; message: string }[]
     }
   }>(query, {
-    input: { firstName, lastName, email, password }
+    input: { firstName, lastName, email, password },
   })
 
   const { customer, customerUserErrors } = result.customerCreate
@@ -51,7 +61,7 @@ export default defineEventHandler(async (event) => {
   if (customerUserErrors.length > 0) {
     throw createError({
       statusCode: 400,
-      statusMessage: customerUserErrors[0].message
+      statusMessage: customerUserErrors[0].message,
     })
   }
 
@@ -61,8 +71,8 @@ export default defineEventHandler(async (event) => {
       email: customer!.email,
       firstName: customer!.firstName,
       lastName: customer!.lastName,
-      phone: customer!.phone ?? undefined
+      phone: customer!.phone ?? undefined,
     },
-    accessToken: ''
+    accessToken: '',
   }
 })

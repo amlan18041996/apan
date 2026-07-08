@@ -8,7 +8,7 @@ export default <Config>{
     './layouts/**/*.{vue,js,ts,jsx,tsx,md}',
     './pages/**/*.{vue,js,ts,jsx,tsx,md}',
     './plugins/**/*.{js,ts}',
-    './nuxt.config.{js,ts}'
+    './nuxt.config.{js,ts}',
   ],
   theme: {
     extend: {
@@ -24,7 +24,7 @@ export default <Config>{
           700: 'rgb(67 56 202)',
           800: 'rgb(55 48 163)',
           900: 'rgb(49 46 129)',
-          950: 'rgb(30 27 75)'
+          950: 'rgb(30 27 75)',
         },
         secondary: {
           50: 'rgb(253 242 248)',
@@ -37,45 +37,45 @@ export default <Config>{
           700: 'rgb(190 24 93)',
           800: 'rgb(157 23 77)',
           900: 'rgb(131 24 67)',
-          950: 'rgb(80 7 36)'
-        }
+          950: 'rgb(80 7 36)',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        heading: ['Inter', 'system-ui', '-apple-system', 'sans-serif']
+        heading: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       spacing: {
         '18': '4.5rem',
         '88': '22rem',
-        '128': '32rem'
+        '128': '32rem',
       },
       borderRadius: {
-        '4xl': '2rem'
+        '4xl': '2rem',
       },
       boxShadow: {
-        'soft': '0 2px 15px -3px rgb(0 0 0 / 0.07), 0 10px 20px -2px rgb(0 0 0 / 0.04)',
-        'soft-lg': '0 10px 25px -5px rgb(0 0 0 / 0.08), 0 10px 10px -5px rgb(0 0 0 / 0.04)'
+        soft: '0 2px 15px -3px rgb(0 0 0 / 0.07), 0 10px 20px -2px rgb(0 0 0 / 0.04)',
+        'soft-lg': '0 10px 25px -5px rgb(0 0 0 / 0.08), 0 10px 10px -5px rgb(0 0 0 / 0.04)',
       },
       animation: {
         'fade-in': 'fadeIn 0.2s ease-in-out',
         'slide-up': 'slideUp 0.3s ease-out',
-        'slide-down': 'slideDown 0.3s ease-out'
+        'slide-down': 'slideDown 0.3s ease-out',
       },
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0' },
-          '100%': { opacity: '1' }
+          '100%': { opacity: '1' },
         },
         slideUp: {
           '0%': { transform: 'translateY(10px)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' }
+          '100%': { transform: 'translateY(0)', opacity: '1' },
         },
         slideDown: {
           '0%': { transform: 'translateY(-10px)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' }
-        }
-      }
-    }
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+      },
+    },
   },
-  plugins: []
+  plugins: [],
 }
