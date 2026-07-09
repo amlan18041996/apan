@@ -1,6 +1,6 @@
 <template>
   <div class="container-page py-8">
-    <div v-if="!route.query.q && !hasActiveFilters" class="mb-8">
+    <div v-if="!searchQuery && !hasActiveFilters" class="mb-8">
       <h1 class="text-3xl font-bold text-text">Search Products</h1>
       <p class="mt-2 text-text-muted">
         Browse all products or use the search bar above to find what you're looking for.
@@ -9,7 +9,7 @@
 
     <div v-else class="mb-6">
       <h1 class="text-3xl font-bold text-text">
-        {{ route.query.q ? `Results for "${route.query.q}"` : 'All Products' }}
+        {{ searchQuery ? `Results for "${searchQuery}"` : 'All Products' }}
       </h1>
       <p class="mt-1 text-text-muted">
         {{ filteredProducts.length }} product{{ filteredProducts.length === 1 ? '' : 's' }} found
@@ -78,7 +78,7 @@
           <div class="rounded-lg border border-border">
             <button
               class="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-text hover:bg-gray-50"
-              @click="openFilterSections.price = !openFilterSections.price"
+              @click="toggleFilterSection('price')"
             >
               Price Range
               <svg
@@ -126,7 +126,7 @@
           <div class="flex flex-wrap items-center gap-2">
             <button
               class="btn-secondary flex items-center gap-2 lg:hidden"
-              @click="mobileFiltersOpen = true"
+              @click="openMobileFilters()"
             >
               <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
@@ -177,10 +177,7 @@
                     ? 'bg-primary-50 text-primary-600'
                     : 'text-text-muted hover:bg-gray-50'
                 "
-                @click="
-                  viewMode = 'grid'
-                  updateURL()
-                "
+                @click="setViewMode('grid')"
               >
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
@@ -198,10 +195,7 @@
                     ? 'bg-primary-50 text-primary-600'
                     : 'text-text-muted hover:bg-gray-50'
                 "
-                @click="
-                  viewMode = 'list'
-                  updateURL()
-                "
+                @click="setViewMode('list')"
               >
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
@@ -328,13 +322,13 @@
 
     <Teleport to="body">
       <div v-if="mobileFiltersOpen" class="fixed inset-0 z-50 lg:hidden">
-        <div class="absolute inset-0 bg-black/50" @click="mobileFiltersOpen = false" />
+        <div class="absolute inset-0 bg-black/50" @click="closeMobileFilters()" />
         <div
           class="absolute inset-y-0 right-0 w-80 max-w-[85vw] overflow-y-auto bg-white p-6 shadow-xl"
         >
           <div class="mb-6 flex items-center justify-between">
             <h2 class="text-lg font-semibold text-text">Filters</h2>
-            <button class="text-text-muted hover:text-text" @click="mobileFiltersOpen = false">
+            <button class="text-text-muted hover:text-text" @click="closeMobileFilters()">
               <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   stroke-linecap="round"
@@ -391,7 +385,7 @@
 
           <div class="mt-8 flex gap-3">
             <button class="btn-secondary flex-1" @click="clearAllFilters">Clear all</button>
-            <button class="btn-primary flex-1" @click="mobileFiltersOpen = false">Apply</button>
+            <button class="btn-primary flex-1" @click="closeMobileFilters()">Apply</button>
           </div>
         </div>
       </div>
@@ -449,6 +443,21 @@ const filterSections: Record<string, FilterConfig> = {
       { value: 'bags', label: 'Bags' },
     ],
   },
+}
+
+const searchQuery = computed(() => (route.query.q as string) || '')
+
+function openMobileFilters() {
+  mobileFiltersOpen.value = true
+}
+
+function closeMobileFilters() {
+  mobileFiltersOpen.value = false
+}
+
+function setViewMode(mode: 'grid' | 'list') {
+  viewMode.value = mode
+  updateURL()
 }
 
 const { data: allProducts, status } = useAsyncData('search-products', () => getProducts(50), {
@@ -622,10 +631,15 @@ function updateURL() {
   router.replace({ query })
 }
 
-const debouncedUpdateURL = useDebounceFn(() => {
-  page.value = 1
-  updateURL()
-}, 400)
+let debounceTimer: ReturnType<typeof setTimeout> | null = null
+
+function debouncedUpdateURL() {
+  if (debounceTimer) clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(() => {
+    page.value = 1
+    updateURL()
+  }, 400)
+}
 
 function formatPrice(amount: string | number): string {
   return parseFloat(String(amount)).toFixed(2)
