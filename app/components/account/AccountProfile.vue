@@ -61,6 +61,8 @@
 </template>
 
 <script setup lang="ts">
+import { useUIStore } from '~/stores/useUIStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { profileSchema, type ProfileInput } from '~/schemas/account'
 
 const userStore = useUserStore()

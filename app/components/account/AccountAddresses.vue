@@ -189,6 +189,8 @@
 </template>
 
 <script setup lang="ts">
+import { useUIStore } from '~/stores/useUIStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { addressSchema, type AddressInput } from '~/schemas/account'
 
 const userStore = useUserStore()

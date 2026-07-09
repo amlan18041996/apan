@@ -78,6 +78,8 @@
 </template>
 
 <script setup lang="ts">
+import { useUIStore } from '~/stores/useUIStore'
+import { useUserStore } from '~/stores/useUserStore'
 import { passwordSchema } from '~/schemas/account'
 
 const userStore = useUserStore()
