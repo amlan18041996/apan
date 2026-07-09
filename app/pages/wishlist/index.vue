@@ -324,6 +324,9 @@
 
 <script setup lang="ts">
 import type { ShopifyProduct } from '~/types/shopify'
+import { useWishlistStore } from '~/stores/useWishlistStore'
+import { useCartStore } from '~/stores/useCartStore'
+import { useUserStore } from '~/stores/useUserStore'
 
 definePageMeta({
   layout: 'default',
