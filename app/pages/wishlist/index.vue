@@ -327,6 +327,7 @@ import type { ShopifyProduct } from '~/types/shopify'
 import { useWishlistStore } from '~/stores/useWishlistStore'
 import { useCartStore } from '~/stores/useCartStore'
 import { useUserStore } from '~/stores/useUserStore'
+import { useUIStore } from '~/stores/useUIStore'
 
 definePageMeta({
   layout: 'default',
