@@ -242,11 +242,13 @@
                   />
                 </svg>
               </button>
+              <!-- eslint-disable vue/no-v-html -->
               <div
                 v-show="openAccordion === idx"
                 class="border-t border-border px-4 py-3 text-sm text-text-muted leading-relaxed"
                 v-html="section.content"
               />
+              <!-- eslint-enable vue/no-v-html -->
             </div>
           </div>
         </div>

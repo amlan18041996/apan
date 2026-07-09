@@ -98,6 +98,16 @@ export interface ShopifyCartLine {
   }
 }
 
+export interface ShopifyOrder {
+  id: string
+  name: string
+  totalPrice: string
+  processedAt: string
+  fulfillmentStatus: string
+  financialStatus: string
+  lineItems: { title: string; quantity: number; price: string }[]
+}
+
 export interface ShopifyCustomer {
   id: string
   email: string
@@ -107,7 +117,7 @@ export interface ShopifyCustomer {
   acceptsMarketing: boolean
   defaultAddress: ShopifyAddress | null
   addresses: ShopifyAddress[]
-  orders: any[]
+  orders: ShopifyOrder[]
 }
 
 export interface ShopifyAddress {

@@ -122,8 +122,8 @@ async function handleLogin() {
   try {
     await user.login(form.email, form.password)
     await router.push('/')
-  } catch (err: any) {
-    apiError.value = err.message
+  } catch (err) {
+    apiError.value = (err as { message?: string }).message || 'Login failed'
   }
 }
 </script>

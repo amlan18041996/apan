@@ -176,8 +176,8 @@ async function handleRegister() {
       password: form.password,
     })
     await router.push('/')
-  } catch (err: any) {
-    apiError.value = err.message
+  } catch (err) {
+    apiError.value = (err as { message?: string }).message || 'Registration failed'
   }
 }
 </script>

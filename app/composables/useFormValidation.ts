@@ -37,9 +37,7 @@ export function useFormValidation<T extends Record<string, unknown>>(schema: Zod
   }
 
   function clearFieldError(field: string) {
-    const updated = { ...errors.value }
-    delete updated[field]
-    errors.value = updated
+    errors.value = Object.fromEntries(Object.entries(errors.value).filter(([key]) => key !== field))
   }
 
   function formatError(zodError: ZodError): Record<string, string[]> {
