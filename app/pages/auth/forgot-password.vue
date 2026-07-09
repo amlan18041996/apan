@@ -74,8 +74,9 @@ async function handleSubmit() {
       body: { email: email.value },
     })
     submitted.value = true
-  } catch (err: any) {
-    apiError.value = err.data?.statusMessage || err.message || 'Something went wrong'
+  } catch (err) {
+    const error = err as { data?: { statusMessage?: string }; message?: string }
+    apiError.value = error.data?.statusMessage || error.message || 'Something went wrong'
   }
 }
 </script>

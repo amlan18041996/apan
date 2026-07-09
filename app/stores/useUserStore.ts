@@ -39,8 +39,11 @@ export const useUserStore = defineStore('user', {
         this.user = data.user
         this.accessToken = data.accessToken
         return true
-      } catch (err: any) {
-        throw new Error(err.data?.statusMessage || err.message || 'Login failed')
+      } catch (err) {
+        const error = err as { data?: { statusMessage?: string }; message?: string }
+        throw new Error(error.data?.statusMessage || error.message || 'Login failed', {
+          cause: err,
+        })
       } finally {
         this.loading = false
       }
@@ -56,8 +59,11 @@ export const useUserStore = defineStore('user', {
         this.user = result.user
         this.accessToken = result.accessToken
         return true
-      } catch (err: any) {
-        throw new Error(err.data?.statusMessage || err.message || 'Registration failed')
+      } catch (err) {
+        const error = err as { data?: { statusMessage?: string }; message?: string }
+        throw new Error(error.data?.statusMessage || error.message || 'Registration failed', {
+          cause: err,
+        })
       } finally {
         this.loading = false
       }

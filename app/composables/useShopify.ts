@@ -1,14 +1,14 @@
-import type { ShopifyProduct, ShopifyCollection } from '~/types/shopify'
+import type { ShopifyProduct, ShopifyCollection, ShopifyPageInfo } from '~/types/shopify'
 
 export function useShopify() {
   async function getProducts(
     first: number = 20,
     after?: string,
-  ): Promise<{ products: ShopifyProduct[]; pageInfo: any }> {
+  ): Promise<{ products: ShopifyProduct[]; pageInfo: ShopifyPageInfo }> {
     const params = new URLSearchParams({ first: String(first) })
     if (after) params.set('after', after)
 
-    const data = await $fetch<{ products: { nodes: ShopifyProduct[]; pageInfo: any } }>(
+    const data = await $fetch<{ products: { nodes: ShopifyProduct[]; pageInfo: ShopifyPageInfo } }>(
       `/api/products?${params}`,
     )
     return {

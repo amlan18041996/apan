@@ -18,7 +18,7 @@ function getClient() {
   shopifyClient = shopifyApi({
     apiKey: config.storefrontAccessToken,
     apiSecretKey: config.storefrontAccessToken || '',
-    apiVersion: config.apiVersion as any,
+    apiVersion: config.apiVersion as unknown as ApiVersion,
     scopes: ['unauthenticated_read_product_listings'],
     isEmbeddedApp: false,
     hostName: config.storeDomain.replace('.myshopify.com', ''),
@@ -34,7 +34,7 @@ export async function shopifyFetch<T>(
   const config = getConfig()
   const endpoint = `https://${config.storeDomain}/api/${config.apiVersion}/graphql.json`
 
-  const response = await $fetch<{ data: T; errors?: any[] }>(endpoint, {
+  const response = await $fetch<{ data: T; errors?: { message: string }[] }>(endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ export async function shopifyAdminFetch<T>(
 
   const token = await getAdminToken()
 
-  const response = await $fetch<{ data: T; errors?: any[] }>(endpoint, {
+  const response = await $fetch<{ data: T; errors?: { message: string }[] }>(endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

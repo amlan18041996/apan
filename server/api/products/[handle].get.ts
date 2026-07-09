@@ -77,6 +77,6 @@ export default defineEventHandler(async (event) => {
     }
   `
 
-  const result = await shopifyAdminFetch<{ productByHandle: any }>(query, { handle })
+  const result = await shopifyAdminFetch<Record<string, unknown>>(query, { handle })
   return result
 })

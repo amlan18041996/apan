@@ -405,7 +405,7 @@ useSeoMeta({
 
 const route = useRoute()
 const router = useRouter()
-const { getProducts, searchProducts } = useShopify()
+const { getProducts } = useShopify()
 
 interface FilterOption {
   value: string
