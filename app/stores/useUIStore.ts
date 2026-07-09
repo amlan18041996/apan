@@ -61,8 +61,10 @@ export const useUIStore = defineStore('ui', {
     addToast(toast: Omit<Toast, 'id'>) {
       const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
       this.toasts.push({ ...toast, id })
-      const duration = toast.duration ?? 5000
-      setTimeout(() => this.removeToast(id), duration)
+      const duration = toast.duration ?? 3000
+      if (duration > 0) {
+        setTimeout(() => this.removeToast(id), duration)
+      }
     },
 
     removeToast(id: string) {
