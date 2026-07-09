@@ -1,3 +1,5 @@
+import { useUIStore } from '~/stores/useUIStore'
+
 interface ToastOptions {
   duration?: number
 }

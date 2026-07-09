@@ -289,6 +289,9 @@
 </template>
 
 <script setup lang="ts">
+import { useUIStore } from '~/stores/useUIStore'
+import { useCartStore } from '~/stores/useCartStore'
+
 definePageMeta({
   layout: 'default',
 })
