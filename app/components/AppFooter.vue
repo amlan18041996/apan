@@ -185,8 +185,8 @@ const quickLinks = [
   { label: 'Contact Us', to: '/contact' },
   { label: 'FAQ', to: '/faq' },
   { label: 'Shipping & Returns', to: '/shipping-returns' },
-  { label: 'Privacy Policy', to: '/privacy-policy' },
-  { label: 'Terms of Service', to: '/terms-of-service' },
+  { label: 'Privacy Policy', to: '/terms' },
+  { label: 'Terms of Service', to: '/terms' },
 ]
 
 const categories = [
