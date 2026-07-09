@@ -34,7 +34,7 @@
             v-if="searchQuery"
             class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted transition-colors hover:text-text"
             aria-label="Clear search"
-            @click="searchQuery = ''"
+            @click="clearSearch"
           >
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -64,7 +64,7 @@
                 ? 'bg-primary-600 text-white'
                 : 'text-text-muted hover:bg-gray-100 hover:text-text'
             "
-            @click="activeTab = tab"
+            @click="setActiveTab(tab)"
           >
             {{ tab }}
           </button>
@@ -97,15 +97,7 @@
           <p class="mt-2 text-sm text-text-muted">
             Try a different search term or browse all categories.
           </p>
-          <button
-            class="btn-primary mt-4"
-            @click="
-              activeTab = 'All'
-              searchQuery = ''
-            "
-          >
-            Browse All FAQs
-          </button>
+          <button class="btn-primary mt-4" @click="resetFilters">Browse All FAQs</button>
         </div>
 
         <Accordion v-for="category in displayedCategories" :key="category" class="mb-6">
@@ -368,6 +360,19 @@ const tabs = ['All', ...categories]
 const searchQuery = ref('')
 const debouncedQuery = ref('')
 const activeTab = ref('All')
+
+function setActiveTab(tab: string) {
+  activeTab.value = tab
+}
+
+function clearSearch() {
+  searchQuery.value = ''
+}
+
+function resetFilters() {
+  activeTab.value = 'All'
+  searchQuery.value = ''
+}
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 watch(searchQuery, (val) => {
