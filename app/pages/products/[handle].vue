@@ -108,21 +108,37 @@
 
           <div v-if="product.options.length" class="space-y-5">
             <div v-for="option in product.options" :key="option.id">
-              <label class="mb-2 block text-sm font-medium text-text">{{ option.name }}</label>
-              <div class="flex flex-wrap gap-2">
-                <button
-                  v-for="val in option.values"
-                  :key="val"
-                  class="rounded-lg border px-4 py-2 text-sm transition-all"
-                  :class="
-                    selectedOptions[option.name] === val
-                      ? 'border-primary-600 bg-primary-50 text-primary-700 ring-1 ring-primary-600'
-                      : 'border-border text-text hover:border-primary-500 hover:text-primary-600'
-                  "
-                  @click="selectOption(option.name, val)"
-                >
-                  {{ val }}
-                </button>
+              <ColorSwatch
+                v-if="isColorOption(option.name)"
+                :model-value="selectedOptions[option.name] ?? null"
+                :options="getColorOptions(option)"
+                :label="option.name"
+                @update:model-value="selectOption(option.name, $event)"
+              />
+              <SizePicker
+                v-else-if="isSizeOption(option.name)"
+                :model-value="selectedOptions[option.name] ?? null"
+                :options="getSizeOptions(option)"
+                :label="option.name"
+                @update:model-value="selectOption(option.name, $event)"
+              />
+              <div v-else>
+                <label class="mb-2 block text-sm font-medium text-text">{{ option.name }}</label>
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    v-for="val in option.values"
+                    :key="val"
+                    class="rounded-lg border px-4 py-2 text-sm transition-all"
+                    :class="
+                      selectedOptions[option.name] === val
+                        ? 'border-primary-600 bg-primary-50 text-primary-700 ring-1 ring-primary-600'
+                        : 'border-border text-text hover:border-primary-500 hover:text-primary-600'
+                    "
+                    @click="selectOption(option.name, val)"
+                  >
+                    {{ val }}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -339,7 +355,9 @@
 </template>
 
 <script setup lang="ts">
-import type { ShopifyProduct } from '~/types/shopify'
+import type { ShopifyProduct, ShopifyProductOption } from '~/types/shopify'
+import type { ColorSwatchOption } from '~/components/ColorSwatch.vue'
+import type { SizePickerOption } from '~/components/SizePicker.vue'
 import { useUIStore } from '~/stores/useUIStore'
 import { useCartStore } from '~/stores/useCartStore'
 import { useWishlistStore } from '~/stores/useWishlistStore'
@@ -437,6 +455,98 @@ function formatPrice(amount: string | number): string {
 
 function selectOption(name: string, value: string) {
   selectedOptions.value = { ...selectedOptions.value, [name]: value }
+}
+
+const COLOR_MAP: Record<string, string> = {
+  black: '#000000',
+  white: '#FFFFFF',
+  red: '#DC2626',
+  blue: '#2563EB',
+  green: '#16A34A',
+  yellow: '#EAB308',
+  orange: '#EA580C',
+  purple: '#9333EA',
+  pink: '#EC4899',
+  brown: '#92400E',
+  grey: '#6B7280',
+  gray: '#6B7280',
+  navy: '#1E3A5F',
+  beige: '#F5F5DC',
+  tan: '#D2B48C',
+  ivory: '#FFFFF0',
+  teal: '#0D9488',
+  coral: '#FF7F50',
+  maroon: '#800000',
+  gold: '#FFD700',
+  silver: '#C0C0C0',
+  charcoal: '#36454F',
+  cream: '#FFFDD0',
+  lavender: '#E6E6FA',
+  mint: '#98FF98',
+  peach: '#FFE5B4',
+  burgundy: '#800020',
+  olive: '#808000',
+  turquoise: '#40E0D0',
+  crimson: '#DC143C',
+  indigo: '#4B0082',
+  khaki: '#C3B091',
+  lime: '#32CD32',
+  magenta: '#FF00FF',
+  plum: '#8E4585',
+  salmon: '#FA8072',
+  sienna: '#A0522D',
+  steel: '#4682B4',
+  wheat: '#F5DEB3',
+}
+
+function getColorHex(name: string): string {
+  const normalized = name.toLowerCase().trim()
+  if (COLOR_MAP[normalized]) return COLOR_MAP[normalized]
+  if (normalized.startsWith('#')) return normalized
+  return '#888888'
+}
+
+function isColorOption(name: string): boolean {
+  const n = name.toLowerCase()
+  return n === 'color' || n === 'colour' || n === 'colors' || n === 'colours'
+}
+
+function isSizeOption(name: string): boolean {
+  const n = name.toLowerCase()
+  return n === 'size' || n === 'sizes'
+}
+
+function isOptionAvailable(optionName: string, optionValue: string): boolean {
+  if (!product.value) return true
+  return product.value.variants.some((variant) => {
+    const matchesTarget = variant.selectedOptions.some(
+      (o) => o.name === optionName && o.value === optionValue,
+    )
+    if (!matchesTarget) return false
+    const otherOptionsSelected = Object.entries(selectedOptions.value).filter(
+      ([name]) => name !== optionName,
+    )
+    return otherOptionsSelected.every(([name, val]) =>
+      variant.selectedOptions.some((o) => o.name === name && o.value === val),
+    )
+  })
+}
+
+function getColorOptions(option: ShopifyProductOption): ColorSwatchOption[] {
+  return option.values.map((val) => ({
+    value: val,
+    label: val,
+    color: getColorHex(val),
+    disabled: !isOptionAvailable(option.name, val),
+  }))
+}
+
+function getSizeOptions(option: ShopifyProductOption): SizePickerOption[] {
+  return option.values.map((val) => ({
+    value: val,
+    label: val,
+    disabled: !isOptionAvailable(option.name, val),
+  }))
 }
 
 function onQuantityInput(e: Event) {
