@@ -14,6 +14,10 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
     shopifyAdminToken: '',
+    typesenseHost: 'localhost',
+    typesensePort: '8108',
+    typesenseApiKey: '',
+    typesenseProtocol: 'http',
     public: {
       shopifyStoreDomain: '',
       shopifyStorefrontToken: '',
