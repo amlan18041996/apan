@@ -48,6 +48,7 @@ function createInitialState(): CheckoutState {
     isSubmitting: false,
     orderConfirmation: null,
     error: null,
+    idempotencyKey: null,
   }
 }
 
@@ -259,6 +260,81 @@ export function useCheckout() {
     state.value.acceptedTerms = value
   }
 
+  async function submitOrder(
+    lineItems: { variantId: string; quantity: number; price: number; title: string }[],
+    cart: { clearCart: () => Promise<void> },
+  ): Promise<OrderConfirmation> {
+    if (state.value.isSubmitting && state.value.idempotencyKey) {
+      const result = await $fetch<{ order: OrderConfirmation }>('/api/checkout/place-order', {
+        method: 'POST',
+        body: {
+          lineItems,
+          email: state.value.email,
+          shippingAddress: state.value.shippingAddress,
+          billingAddress: state.value.sameAsBilling ? undefined : state.value.billingAddress,
+          sameAsBilling: state.value.sameAsBilling,
+          shippingMethod: {
+            id: state.value.selectedShippingMethod!.id,
+            title: state.value.selectedShippingMethod!.title,
+            price: state.value.selectedShippingMethod!.price,
+          },
+          paymentToken: state.value.paymentToken,
+          idempotencyKey: state.value.idempotencyKey,
+        },
+      })
+      completeOrder({
+        orderId: result.order.orderId,
+        orderNumber: result.order.orderNumber,
+        total: result.order.total,
+        email: result.order.email,
+        estimatedDelivery: result.order.estimatedDelivery,
+      })
+      await cart.clearCart()
+      return result.order
+    }
+
+    const key = state.value.idempotencyKey || crypto.randomUUID()
+    state.value.idempotencyKey = key
+    state.value.isSubmitting = true
+    state.value.error = null
+
+    try {
+      const result = await $fetch<{ order: OrderConfirmation }>('/api/checkout/place-order', {
+        method: 'POST',
+        body: {
+          lineItems,
+          email: state.value.email,
+          shippingAddress: state.value.shippingAddress,
+          billingAddress: state.value.sameAsBilling ? undefined : state.value.billingAddress,
+          sameAsBilling: state.value.sameAsBilling,
+          shippingMethod: {
+            id: state.value.selectedShippingMethod!.id,
+            title: state.value.selectedShippingMethod!.title,
+            price: state.value.selectedShippingMethod!.price,
+          },
+          paymentToken: state.value.paymentToken,
+          idempotencyKey: key,
+        },
+      })
+
+      completeOrder({
+        orderId: result.order.orderId,
+        orderNumber: result.order.orderNumber,
+        total: result.order.total,
+        email: result.order.email,
+        estimatedDelivery: result.order.estimatedDelivery,
+      })
+
+      await cart.clearCart()
+
+      return result.order
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Failed to place order. Please try again.'
+      setError(msg)
+      throw e
+    }
+  }
+
   watch(
     state,
     (newState) => {
@@ -300,6 +376,7 @@ export function useCheckout() {
     setPaymentToken,
     setEmail,
     setAcceptedTerms,
+    submitOrder,
   }
 }
 

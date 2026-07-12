@@ -59,6 +59,7 @@ export interface CheckoutState {
   isSubmitting: boolean
   orderConfirmation: OrderConfirmation | null
   error: string | null
+  idempotencyKey: string | null
 }
 
 export type CheckoutPersistableState = Omit<

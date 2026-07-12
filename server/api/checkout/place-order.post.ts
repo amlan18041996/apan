@@ -31,8 +31,26 @@ const bodySchema = z.object({
     price: z.number().min(0),
   }),
   paymentToken: z.string().min(1, 'Payment token is required'),
+  idempotencyKey: z.string().uuid('Invalid idempotency key'),
   customerId: z.string().optional(),
 })
+
+const idempotencyCache = new Map<string, { result: unknown; timestamp: number }>()
+const IDEMPOTENCY_TTL = 24 * 60 * 60 * 1000
+
+function getCachedResult(key: string) {
+  const cached = idempotencyCache.get(key)
+  if (!cached) return null
+  if (Date.now() - cached.timestamp > IDEMPOTENCY_TTL) {
+    idempotencyCache.delete(key)
+    return null
+  }
+  return cached.result
+}
+
+function setCachedResult(key: string, result: unknown) {
+  idempotencyCache.set(key, { result, timestamp: Date.now() })
+}
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -52,8 +70,14 @@ export default defineEventHandler(async (event) => {
     billingAddress,
     sameAsBilling,
     shippingMethod,
+    idempotencyKey,
     customerId,
   } = parsed.data
+
+  const cachedResult = getCachedResult(idempotencyKey)
+  if (cachedResult) {
+    return cachedResult
+  }
 
   // TODO: Validate parsed.data.paymentToken with payment gateway before creating order
 
@@ -62,6 +86,7 @@ export default defineEventHandler(async (event) => {
     buildOrderPayload,
     mapOrderResponse,
     generateConfirmationNumber,
+    mapShopifyUserError,
     ORDER_GRAPHQL_FRAGMENT,
   } = await import('../../utils/orders')
 
@@ -124,10 +149,10 @@ export default defineEventHandler(async (event) => {
   })
 
   if (createResult.draftOrderCreate.userErrors.length > 0) {
-    const err = createResult.draftOrderCreate.userErrors[0]
+    const message = mapShopifyUserError(createResult.draftOrderCreate.userErrors)
     throw createError({
       statusCode: 400,
-      statusMessage: `Failed to create draft order: ${err.message}`,
+      statusMessage: message,
     })
   }
 
@@ -211,10 +236,10 @@ export default defineEventHandler(async (event) => {
   }>(markPaidMutation, { id: draftOrderId })
 
   if (completeResult.draftOrderInvoiceSend.userErrors.length > 0) {
-    const err = completeResult.draftOrderInvoiceSend.userErrors[0]
+    const message = mapShopifyUserError(completeResult.draftOrderInvoiceSend.userErrors)
     throw createError({
       statusCode: 400,
-      statusMessage: `Failed to complete order: ${err.message}`,
+      statusMessage: message,
     })
   }
 
@@ -229,7 +254,7 @@ export default defineEventHandler(async (event) => {
   const orderResponse = mapOrderResponse(shopifyOrder)
   orderResponse.confirmationNumber = confirmationNumber
 
-  return {
+  const result = {
     order: {
       orderId: orderResponse.orderId,
       orderNumber: orderResponse.orderNumber,
@@ -242,6 +267,10 @@ export default defineEventHandler(async (event) => {
     },
     fullOrder: orderResponse,
   }
+
+  setCachedResult(idempotencyKey, result)
+
+  return result
 })
 
 function getEstimatedDelivery(): string {
