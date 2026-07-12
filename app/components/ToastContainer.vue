@@ -106,8 +106,8 @@ const ui = useUIStore()
 const containerClasses = computed(() => {
   const base = 'fixed z-50 flex flex-col gap-3 pointer-events-none'
   const positions: Record<string, string> = {
-    'top-right': 'top-4 right-4',
-    'top-left': 'top-4 left-4',
+    'top-right': 'top-20 right-4',
+    'top-left': 'top-20 left-4',
     'bottom-right': 'bottom-4 right-4',
     'bottom-left': 'bottom-4 left-4',
   }
