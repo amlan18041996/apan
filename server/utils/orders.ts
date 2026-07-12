@@ -284,6 +284,43 @@ export function generateConfirmationNumber(): string {
   return `APAN-${timestamp}-${random}`
 }
 
+export function generateIdempotencyKey(): string {
+  return crypto.randomUUID()
+}
+
+const SHOPIFY_ERROR_MAP: Record<string, string> = {
+  INVENTORY_NOT_AVAILABLE: 'One or more items are no longer in stock. Please review your cart.',
+  PRICE_HAS_CHANGED: 'The price of some items has changed. Please review your cart.',
+  CUSTOMER_DOES_NOT_EXIST: 'There was an issue with your account. Please try logging in again.',
+}
+
+const GENERIC_ERROR_MESSAGE =
+  'We could not process your order. Please try again or contact support.'
+
+export function mapShopifyUserError(
+  errors: { code: string; field: string[]; message: string }[],
+): string {
+  if (errors.length === 0) return GENERIC_ERROR_MESSAGE
+
+  console.error('[Order Creation] Shopify userErrors:', JSON.stringify(errors, null, 2))
+
+  const first = errors[0]
+  const mapped = SHOPIFY_ERROR_MAP[first.code]
+  if (mapped) return mapped
+
+  if (first.message.toLowerCase().includes('inventory')) {
+    return SHOPIFY_ERROR_MAP.INVENTORY_NOT_AVAILABLE
+  }
+  if (first.message.toLowerCase().includes('price')) {
+    return SHOPIFY_ERROR_MAP.PRICE_HAS_CHANGED
+  }
+  if (first.message.toLowerCase().includes('customer')) {
+    return SHOPIFY_ERROR_MAP.CUSTOMER_DOES_NOT_EXIST
+  }
+
+  return GENERIC_ERROR_MESSAGE
+}
+
 export const ORDER_GRAPHQL_FRAGMENT = `
   id
   name

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { ShippingMethod } from '~/types/checkout'
-
 interface Props {
   subtotal: number
 }
@@ -12,7 +10,7 @@ const emit = defineEmits<{
   back: []
 }>()
 
-const { state, goToStep, setAcceptedTerms, setError, clearError } = useCheckout()
+const { state, goToStep, setAcceptedTerms, submitOrder, clearError } = useCheckout()
 const cart = useCartStore()
 
 const processing = ref(false)
@@ -84,29 +82,10 @@ async function handlePlaceOrder() {
       title: item.title,
     }))
 
-    const method = state.value.selectedShippingMethod as ShippingMethod
-
-    await $fetch('/api/checkout/place-order', {
-      method: 'POST',
-      body: {
-        lineItems,
-        email: state.value.email,
-        shippingAddress: state.value.shippingAddress,
-        billingAddress: state.value.sameAsBilling ? undefined : state.value.billingAddress,
-        sameAsBilling: state.value.sameAsBilling,
-        shippingMethod: {
-          id: method.id,
-          title: method.title,
-          price: method.price,
-        },
-        paymentToken: state.value.paymentToken,
-      },
-    })
-
+    await submitOrder(lineItems, cart)
     emit('submit')
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : 'Failed to place order. Please try again.'
-    setError(msg)
+  } catch {
+    // Error is already handled by submitOrder via setError
   } finally {
     processing.value = false
   }
