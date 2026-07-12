@@ -79,7 +79,7 @@ const inputClasses = computed(() => ({
   >
     <button
       type="button"
-      :class="buttonClasses"
+      :class="[buttonClasses, { 'cursor-not-allowed opacity-40': isAtMin }]"
       :disabled="isAtMin"
       :aria-label="`Decrease quantity by ${step}`"
       @click="decrement"
@@ -107,7 +107,7 @@ const inputClasses = computed(() => ({
 
     <button
       type="button"
-      :class="buttonClasses"
+      :class="[buttonClasses, { 'cursor-not-allowed opacity-40': isAtMax }]"
       :disabled="isAtMax"
       :aria-label="`Increase quantity by ${step}`"
       @click="increment"
@@ -126,10 +126,3 @@ const inputClasses = computed(() => ({
     </button>
   </div>
 </template>
-
-<style scoped>
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.4;
-}
-</style>
