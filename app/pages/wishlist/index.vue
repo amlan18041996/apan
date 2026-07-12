@@ -502,7 +502,7 @@ const canAddVariantToCart = computed(() => {
 
 function addToCart(item: WishlistDisplayItem) {
   const full = productMap.value.get(item.productId)
-  if (full && full.variants.length > 1) {
+  if (full && (Array.isArray(full.variants) ? full.variants : []).length > 1) {
     variantProduct.value = item
     selectedVariants.value = {}
     for (const opt of full.options) {
@@ -513,7 +513,7 @@ function addToCart(item: WishlistDisplayItem) {
   }
 
   addingCartIds.value.add(item.productId)
-  const variantId = full?.variants[0]?.id ?? item.productId
+  const variantId = (Array.isArray(full?.variants) ? full.variants : [])[0]?.id ?? item.productId
   cart
     .addToCart({
       id: variantId,
@@ -545,7 +545,7 @@ function confirmVariantAdd() {
   const full = productMap.value.get(item.productId)
   if (!full) return
 
-  const selectedVariant = full.variants.find((v) =>
+  const selectedVariant = (Array.isArray(full.variants) ? full.variants : []).find((v) =>
     v.selectedOptions.every((opt) => selectedVariants.value[opt.name] === opt.value),
   )
 

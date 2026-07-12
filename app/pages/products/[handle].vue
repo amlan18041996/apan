@@ -410,10 +410,8 @@ watch(product, (p) => {
 const currentVariant = computed(() => {
   if (!product.value) return null
   const opts = selectedOptions.value
-  return (
-    product.value.variants.find((v) => v.selectedOptions.every((o) => opts[o.name] === o.value)) ??
-    product.value.variants[0]
-  )
+  const v = Array.isArray(product.value.variants) ? product.value.variants : []
+  return v.find((v) => v.selectedOptions.every((o) => opts[o.name] === o.value)) ?? v[0] ?? null
 })
 
 const currentPrice = computed(() => {
@@ -518,7 +516,7 @@ function isSizeOption(name: string): boolean {
 
 function isOptionAvailable(optionName: string, optionValue: string): boolean {
   if (!product.value) return true
-  return product.value.variants.some((variant) => {
+  return (Array.isArray(product.value.variants) ? product.value.variants : []).some((variant) => {
     const matchesTarget = variant.selectedOptions.some(
       (o) => o.name === optionName && o.value === optionValue,
     )
@@ -675,7 +673,9 @@ useHead({
           name: product.value.title,
           description: product.value.description,
           image: product.value.featuredImage?.url,
-          sku: product.value.variants[0]?.sku ?? product.value.id,
+          sku:
+            (Array.isArray(product.value.variants) ? product.value.variants : [])[0]?.sku ??
+            product.value.id,
           mpn: product.value.id,
           brand: { '@type': 'Brand', name: product.value.vendor },
           offers: {
