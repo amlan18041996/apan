@@ -14,6 +14,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
     shopifyAdminToken: '',
+    stripeSecretKey: '',
     typesenseHost: 'localhost',
     typesensePort: '8108',
     typesenseApiKey: '',
@@ -23,6 +24,7 @@ export default defineNuxtConfig({
       shopifyStorefrontToken: '',
       shopifyApiVersion: '2024-10',
       appUrl: '',
+      stripePublishableKey: '',
     },
   },
 })
