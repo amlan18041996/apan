@@ -48,23 +48,21 @@ function increment() {
 }
 
 const containerClasses = computed(() => ({
-  'inline-flex items-center rounded-lg border border-gray-300': true,
+  'inline-flex items-center rounded-lg border border-border': true,
   'h-8 text-sm': props.size === 'sm',
-  'h-11 text-base': props.size === 'lg',
+  'h-10 text-sm': props.size === 'lg',
 }))
 
 const buttonClasses = computed(() => ({
-  'flex items-center justify-center text-gray-600 transition-colors': true,
-  'hover:bg-gray-100 active:bg-gray-200': true,
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-inset': true,
+  'flex items-center justify-center text-text-muted transition-colors hover:bg-gray-100': true,
   'h-8 w-8': props.size === 'sm',
-  'h-11 w-11': props.size === 'lg',
+  'h-10 w-10': props.size === 'lg',
 }))
 
 const inputClasses = computed(() => ({
-  'flex items-center justify-center border-x border-gray-300 bg-white text-center font-medium text-gray-900 tabular-nums focus:outline-none': true,
+  'flex items-center justify-center border-x border-border bg-transparent text-center font-medium text-text tabular-nums focus:outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none': true,
   'h-8 w-10 text-sm': props.size === 'sm',
-  'h-11 w-14 text-base': props.size === 'lg',
+  'h-10 w-14 text-sm': props.size === 'lg',
 }))
 </script>
 
@@ -79,21 +77,20 @@ const inputClasses = computed(() => ({
   >
     <button
       type="button"
-      :class="buttonClasses"
+      :class="[buttonClasses, { 'cursor-not-allowed opacity-30': isAtMin }]"
       :disabled="isAtMin"
       :aria-label="`Decrease quantity by ${step}`"
       @click="decrement"
     >
       <svg
         class="h-4 w-4"
-        :class="{ 'h-3.5 w-3.5': size === 'sm' }"
         fill="none"
         viewBox="0 0 24 24"
-        stroke-width="2"
         stroke="currentColor"
+        stroke-width="2"
         aria-hidden="true"
       >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4" />
       </svg>
     </button>
 
@@ -107,29 +104,21 @@ const inputClasses = computed(() => ({
 
     <button
       type="button"
-      :class="buttonClasses"
+      :class="[buttonClasses, { 'cursor-not-allowed opacity-30': isAtMax }]"
       :disabled="isAtMax"
       :aria-label="`Increase quantity by ${step}`"
       @click="increment"
     >
       <svg
         class="h-4 w-4"
-        :class="{ 'h-3.5 w-3.5': size === 'sm' }"
         fill="none"
         viewBox="0 0 24 24"
-        stroke-width="2"
         stroke="currentColor"
+        stroke-width="2"
         aria-hidden="true"
       >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
       </svg>
     </button>
   </div>
 </template>
-
-<style scoped>
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.4;
-}
-</style>
