@@ -144,44 +144,7 @@
           </div>
 
           <div class="mt-6 flex items-center gap-4">
-            <div class="flex items-center rounded-lg border border-border">
-              <button
-                class="flex h-10 w-10 items-center justify-center text-text-muted transition-colors hover:bg-gray-100 disabled:opacity-30"
-                :disabled="quantity <= 1"
-                @click="quantity = Math.max(1, quantity - 1)"
-              >
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M20 12H4"
-                  />
-                </svg>
-              </button>
-              <input
-                :value="quantity"
-                type="number"
-                min="1"
-                :max="maxQuantity"
-                class="h-10 w-14 border-x border-border bg-transparent text-center text-sm text-text [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                @input="onQuantityInput"
-              />
-              <button
-                class="flex h-10 w-10 items-center justify-center text-text-muted transition-colors hover:bg-gray-100 disabled:opacity-30"
-                :disabled="quantity >= maxQuantity"
-                @click="quantity = Math.min(maxQuantity, quantity + 1)"
-              >
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-              </button>
-            </div>
+            <ProductQuantityIncrementor v-model="quantity" :min="1" :max="maxQuantity" size="lg" />
             <button
               class="btn-primary flex-1"
               :disabled="stockStatus === 'out_of_stock' || cartLoading"
@@ -545,14 +508,6 @@ function getSizeOptions(option: ShopifyProductOption): SizePickerOption[] {
     label: val,
     disabled: !isOptionAvailable(option.name, val),
   }))
-}
-
-function onQuantityInput(e: Event) {
-  const target = e.target as HTMLInputElement
-  const val = parseInt(target.value, 10)
-  if (!isNaN(val)) {
-    quantity.value = Math.max(1, Math.min(val, maxQuantity.value))
-  }
 }
 
 function toggleAccordion(idx: number) {
